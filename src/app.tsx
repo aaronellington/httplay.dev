@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg'
 import './app.css'
 
 export function App() {
-  const [count, setCount] = useState(0)
+  const [serverResult, setServerResult] = useState('')
 
   return (
     <>
@@ -18,8 +18,15 @@ export function App() {
       </div>
       <h1>Vite + Preact</h1>
       <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <button onClick={() => {
+          fetch('http://localhost:2291').then((response) => {
+            return response.text()
+          }).then(text => {
+            setServerResult(text)
+          })
+        }
+        }>
+          serverResult is {serverResult}
         </button>
         <p>
           Edit <code>src/app.tsx</code> and save to test HMR
