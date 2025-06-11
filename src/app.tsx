@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './app.css'
 
 export function App() {
+  const [serverAddress, setServerAddress] = useState('http://localhost:2291')
   const [serverResult, setServerResult] = useState('')
 
   return (
@@ -18,15 +19,27 @@ export function App() {
       </div>
       <h1>Vite + Preact</h1>
       <div class="card">
+        <div>
+
+          <label >
+            Server Address:
+            <input onChange={(e) => {
+              setServerAddress((e.target as any).value ?? '')
+            }} value={serverAddress} />
+          </label>
+        </div>
         <button onClick={() => {
-          fetch('http://localhost:2291').then((response) => {
+          fetch(serverAddress).then((response) => {
             return response.text()
           }).then(text => {
             setServerResult(text)
+          }).catch(e => {
+            setServerResult('error, check the web console')
+            console.error(e)
           })
         }
         }>
-          serverResult is {serverResult}
+          Server Result: {serverResult}
         </button>
         <p>
           Edit <code>src/app.tsx</code> and save to test HMR
