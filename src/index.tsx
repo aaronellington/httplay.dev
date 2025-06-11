@@ -1,5 +1,5 @@
 import { render } from 'preact'
 import { App } from './app.tsx'
-import "@lunagic/prometheus/styles"
+import "../node_modules/@lunagic/prometheus/src/styles/index.scss"
 
 render(<App />, document.getElementById('app')!)
