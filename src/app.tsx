@@ -1,45 +1,30 @@
-import { useState } from 'preact/hooks'
-import './app.css'
+import { ErrorBoundary, LocationProvider, Route, Router, useRoute } from 'preact-iso'
+import { PageNotFound } from './pages/PageNotFound'
+import { PageGames } from './pages/PageGames'
+import { PageGame } from './pages/PageGame'
+import { Games } from './games'
+import { PageHome } from './pages/PageHome'
 
 export function App() {
-  const [serverAddress, setServerAddress] = useState('http://localhost:2291')
-  const [serverResult, setServerResult] = useState<string | null>(null)
-
-  return (
-    <>
-      <div class="card">
-        <h1>HTTPlay.dev</h1>
-        <div>
-          <label >
-            Server Address:
-          </label>
-          <div>
-
-            <input onChange={(e) => {
-              setServerAddress((e.target as any).value ?? '')
-            }} value={serverAddress} />
-          </div>
-        </div>
-        <button onClick={() => {
-          fetch(serverAddress).then((response) => {
-            return response.text()
-          }).then(text => {
-            setServerResult(text)
-          }).catch(e => {
-            setServerResult('error, check the web console')
-            console.error(e)
+  return <LocationProvider>
+    <ErrorBoundary>
+      <Router>
+        <Route path="/" component={PageHome} />
+        <Route path="/games" component={PageGames} />
+        <Route path="/games/:slug" component={() => {
+          const x = useRoute()
+          const slug: string = x.params["slug"]
+          const game = Games.find((game) => {
+            return game.Slug === slug
           })
-        }
-        }>
-          Refresh
-        </button>
-        <div>
-          Server Result:
-          <pre>
-            {JSON.stringify(serverResult)}
-          </pre>
-        </div>
-      </div>
-    </>
-  )
+          if (!game) {
+            return PageNotFound
+          }
+
+          return <PageGame Game={game}></PageGame>
+        }} />
+        <Route path="*" component={PageNotFound} />
+      </Router>
+    </ErrorBoundary>
+  </LocationProvider >
 }
