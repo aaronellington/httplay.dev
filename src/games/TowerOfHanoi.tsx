@@ -69,15 +69,15 @@ export class TowerOfHanoi implements Game<State, Update> {
                 }
                 row += disk
             })
-            ascii = "\n" + row + ascii
+
+            ascii = row + "\n" + ascii
         })
 
 
         return <Content>
             <pre
                 style={"font-family: monospace; font-size: 2rem;"}
-            >
-                {ascii}
+            >{ascii}
             </pre>
         </Content >
     }
