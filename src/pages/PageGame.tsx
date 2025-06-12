@@ -17,15 +17,9 @@ export function PageGame(props: GameProps) {
         <div className={classes.main}>
             <div className={classes.top}>
                 <Box>
-                    <Panel centered gap>
-                        <Content>
-                            <h1>HTTPlay.dev</h1>
-                        </Content>
-                        <p style={"flex-grow: 1;"}>
-                            {props.Game.Title}
-                        </p>
-                        <Link href="/games">Go Back</Link>
-                    </Panel>
+                    <Content>
+                        <h1>HTTPlay.dev - {props.Game.Title}</h1>
+                    </Content>
                 </Box>
             </div>
             <div className={classes.middle}>
@@ -87,9 +81,7 @@ export function PageGame(props: GameProps) {
                                 Game State
                             </p>
                             <hr />
-                            <pre
-                                style={"font-family: monospace;"}
-                            >
+                            <pre>
                                 {JSON.stringify(gameState, null, 4)}
                             </pre>
                         </Content>
@@ -99,7 +91,8 @@ export function PageGame(props: GameProps) {
             </div>
             <div className={classes.bottom}>
                 <Box className={classes.right}>
-                    Bottom
+                    <Link href="/games">Go Back</Link>
+
                 </Box>
             </div>
         </div>

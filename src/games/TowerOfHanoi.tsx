@@ -76,7 +76,7 @@ export class TowerOfHanoi implements Game<State, Update> {
 
         return <Content>
             <pre
-                style={"font-family: monospace; font-size: 2rem;"}
+                style={"font-size: 2rem;"}
             >{ascii}
             </pre>
         </Content >
