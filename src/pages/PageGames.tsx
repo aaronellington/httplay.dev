@@ -16,7 +16,7 @@ export function PageGames() {
                     <ul>
                         {Games.map((game) => {
                             return <li>
-                                <Link href={`/games/${game.Slug}`}>{game.Slug}</Link>
+                                <Link href={`/games/${game.Slug}`}>{game.Title}</Link>
                             </li>
                         })}
                     </ul>

@@ -1,27 +1,81 @@
-import { Box, Content, FullPageMessage } from "@lunagic/prometheus"
+import { Box, Button, Content, FormInput, Panel } from "@lunagic/prometheus"
 import type { Game } from "../games"
 import { Link } from "../link"
+import classes from "./PageGame.module.scss"
+import { useState } from "preact/hooks"
 
 export type GameProps = {
-    Game: Game
+    Game: Game<any, any>
 }
 
 export function PageGame(props: GameProps) {
+    const [output, setOutput] = useState<string | null>(null)
+    const [gameState, setGameState] = useState(props.Game.InitialState());
+    const [endpoint, setEndpoint] = useState(`http://127.0.0.1:2690/${props.Game.Slug}`)
+
     return (
-        <FullPageMessage>
-            <Box>
-                <Content>
-                    <h1>
-                        HTTPlay.dev
-                    </h1>
-                    <h2>
-                        {props.Game.Slug}
-                    </h2>
-                    <p>
+        <div className={classes.main}>
+            <div className={classes.top}>
+                <Box>
+                    <Panel centered gap>
+                        <Content>
+                            <h1>HTTPlay.dev</h1>
+
+                        </Content>
+                        <p style={"flex-grow: 1;"}>
+                            {props.Game.Title}
+                        </p>
                         <Link href="/games">Go Back</Link>
-                    </p>
-                </Content>
-            </Box>
-        </FullPageMessage>
+                    </Panel>
+                </Box>
+            </div>
+            <div className={classes.middle}>
+                <Box className={classes.left}>
+                    <Content>
+                        <FormInput type="text" value={endpoint} setValue={setEndpoint}>App Endpoint</FormInput>
+                        <Panel centered>
+                            <Button onClick={async () => {
+                                try {
+                                    const response = await fetch(endpoint)
+                                    try {
+                                        const update = await response.json()
+                                        setOutput(JSON.stringify(update, null, 4))
+                                        try {
+                                            const newState = props.Game.ApplyUpdate(JSON.parse(JSON.stringify(gameState)), update)
+                                            setGameState(newState)
+                                        } catch (e: any) {
+                                            setOutput(e)
+                                        }
+                                    } catch (e) {
+                                        setOutput("json parse failed")
+                                    }
+                                } catch (e: any) {
+                                    setOutput("Failed to connect")
+                                }
+                            }}>Run</Button>
+                            <Button onClick={() => { }}>Step</Button>
+                            <Button onClick={() => {
+                                setGameState(props.Game.InitialState())
+                                setOutput(null)
+                            }}>Reset</Button>
+                        </Panel>
+                        <Content>
+                            <h1>Output:</h1>
+                            <pre>
+                                {output}
+                            </pre>
+                        </Content>
+                    </Content>
+                </Box>
+                <Box className={classes.right}>
+                    {props.Game.DisplayState(gameState)}
+                </Box>
+            </div>
+            <div className={classes.bottom}>
+                <Box className={classes.right}>
+                    Bottom
+                </Box>
+            </div>
+        </div>
     )
 }
