@@ -43,11 +43,6 @@ export class TicTacToe implements Game<State, Update> {
             >
                 {ascii}
             </pre>
-            <pre
-                style={"font-family: monospace;"}
-            >
-                {JSON.stringify(state, null, 4)}
-            </pre>
         </Content>
     }
 

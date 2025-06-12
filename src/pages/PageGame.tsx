@@ -69,9 +69,33 @@ export function PageGame(props: GameProps) {
                         </Content>
                     </Content>
                 </Box>
-                <Box className={classes.right}>
-                    {props.Game.DisplayState(gameState)}
-                </Box>
+                {/* <Box className={classes.right}> */}
+                <Panel direction="vertical" className={classes.right}>
+                    <Box>
+                        <Content>
+                            <p>
+                                Game
+                            </p>
+                            <hr />
+                            {props.Game.DisplayState(gameState)}
+
+                        </Content>
+                    </Box>
+                    <Box>
+                        <Content>
+                            <p>
+                                Game State
+                            </p>
+                            <hr />
+                            <pre
+                                style={"font-family: monospace;"}
+                            >
+                                {JSON.stringify(gameState, null, 4)}
+                            </pre>
+                        </Content>
+                    </Box>
+                </Panel>
+                {/* </Box> */}
             </div>
             <div className={classes.bottom}>
                 <Box className={classes.right}>
