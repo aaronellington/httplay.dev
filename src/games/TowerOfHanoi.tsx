@@ -1,17 +1,7 @@
 import { Content } from "@lunagic/prometheus";
 import type { Game } from "../games";
 
-type Disk = {
-    Width: number
-}
-
-type Tower = {
-    Disks: Disk[]
-}
-
-type State = {
-    Towers: Tower[]
-}
+type State = number[][]
 
 type Update = {
     SourceTower: number
@@ -23,11 +13,11 @@ export class TowerOfHanoi implements Game<State, Update> {
     Slug = "tower-of-hanoi"
 
     public ApplyUpdate(state: State, step: Update): State {
-        const diskToMove = state.Towers[step.SourceTower].Disks.shift()
+        const diskToMove = state[step.SourceTower].shift()
         if (!diskToMove) {
             throw "no disk to move"
         }
-        state.Towers[step.TargetTower].Disks.unshift(diskToMove)
+        state[step.TargetTower].unshift(diskToMove)
 
         return state
     }
@@ -35,8 +25,8 @@ export class TowerOfHanoi implements Game<State, Update> {
     public DisplayState(state: State): preact.VNode {
         const biggestDisk = function () {
             let count = 0;
-            state.Towers.forEach((tower) => {
-                count += tower.Disks.length
+            state.forEach((tower) => {
+                count += tower.length
             })
 
             return count
@@ -56,12 +46,12 @@ export class TowerOfHanoi implements Game<State, Update> {
         let ascii = ""
         Array.from({ length: towerHeight }).forEach((_, rowNumber) => {
             let row = ""
-            state.Towers.forEach((tower) => {
-                const disks = (JSON.parse(JSON.stringify(tower.Disks))).reverse()
+            state.forEach((tower) => {
+                const disks: number[] = (JSON.parse(JSON.stringify(tower))).reverse()
                 let disk = ``
                 if (disks.length >= rowNumber + 1) {
 
-                    let diskWidth = disks[rowNumber].Width
+                    let diskWidth = disks[rowNumber]
                     if (diskWidth % 2 === 0) {
                         disk += `▐${"█".repeat(diskWidth - 1)}▌`
                     } else {
@@ -93,31 +83,10 @@ export class TowerOfHanoi implements Game<State, Update> {
     }
 
     public InitialState(): State {
-        return {
-            Towers: [
-                {
-                    Disks: [
-                        {
-                            Width: 1
-                        },
-                        {
-                            Width: 2
-                        },
-                        {
-                            Width: 3
-                        },
-                        {
-                            Width: 4
-                        },
-                    ]
-                },
-                {
-                    Disks: []
-                },
-                {
-                    Disks: []
-                },
-            ],
-        }
+        return [
+            [1, 2, 3],
+            [],
+            [],
+        ]
     }
 }

@@ -20,7 +20,6 @@ export function PageGame(props: GameProps) {
                     <Panel centered gap>
                         <Content>
                             <h1>HTTPlay.dev</h1>
-
                         </Content>
                         <p style={"flex-grow: 1;"}>
                             {props.Game.Title}
@@ -36,7 +35,10 @@ export function PageGame(props: GameProps) {
                         <Panel centered>
                             <Button onClick={async () => {
                                 try {
-                                    const response = await fetch(endpoint)
+                                    const response = await fetch(endpoint, {
+                                        method: "POST",
+                                        body: JSON.stringify(gameState),
+                                    })
                                     try {
                                         const update = await response.json()
                                         setOutput(JSON.stringify(update, null, 4))
