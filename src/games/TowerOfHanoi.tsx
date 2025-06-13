@@ -1,5 +1,5 @@
 import { Content } from "@lunagic/prometheus";
-import type { Game } from "../games";
+import type { Game, Result } from "../games";
 
 type State = number[][]
 
@@ -12,14 +12,29 @@ export class TowerOfHanoi implements Game<State, Update> {
     Title = "Tower of Hanoi"
     Slug = "tower-of-hanoi"
 
-    public ApplyUpdate(state: State, step: Update): State {
+    public ExampleUpdate(): Update {
+        return {
+            SourceTower: 0,
+            TargetTower: 1,
+        }
+    }
+
+    public ApplyUpdate(state: State, step: Update): Result<State> {
         const diskToMove = state[step.SourceTower].shift()
         if (!diskToMove) {
-            throw "no disk to move"
+            return {
+                State: state,
+                Message: "No disks on tower",
+                Success: false,
+            }
         }
         state[step.TargetTower].unshift(diskToMove)
 
-        return state
+        return {
+            State: state,
+            Message: "",
+            Success: null,
+        }
     }
 
     public DisplayState(state: State): preact.VNode {

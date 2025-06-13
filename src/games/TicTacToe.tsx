@@ -1,5 +1,5 @@
 import { Content } from "@lunagic/prometheus";
-import type { Game } from "../games";
+import type { Game, Result } from "../games";
 
 
 type State = string[][]
@@ -14,26 +14,42 @@ export class TicTacToe implements Game<State, Update> {
     Title = "Tic Tac Toe"
     Slug = "tic-tac-toe"
 
-    public ApplyUpdate(state: State, step: Update): State {
+    public ExampleUpdate(): Update {
+        return {
+            X: 0,
+            Y: 2,
+        }
+    }
+
+    public ApplyUpdate(state: State, step: Update): Result<State> {
+        if (state[step.X][step.Y] !== " ") {
+            throw "invalid move"
+        }
+
         state[step.X][step.Y] = "○"
 
-        return state
+        return {
+            Success: null,
+            Message: "",
+            State: state,
+        }
     }
 
     public DisplayState(state: State): preact.VNode {
-        let ascii = " "
+        let ascii = ""
 
         state.forEach((columns, row) => {
             if (row !== 0) {
-                ascii += "\n━━━╋━━━╋━━━\n "
+                ascii += "\n━━━╋━━━╋━━━\n"
             } else {
             }
 
             columns.forEach((value, index) => {
                 if (index !== 0) {
-                    ascii += " ┃ "
+                    ascii += ` ┃ ${value}`
+                } else {
+                    ascii += ` ${value}`
                 }
-                ascii += value
             })
 
         })
