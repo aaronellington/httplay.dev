@@ -30,7 +30,6 @@ export class TowerOfHanoi implements Game<State, Update> {
         }
         state[step.TargetTower].unshift(diskToMove)
 
-        console.log("-------------------")
         let success: boolean | null = null
         let message = "";
         let disksOnOtherTowers = false;
@@ -49,10 +48,6 @@ export class TowerOfHanoi implements Game<State, Update> {
             if (disksOnOtherTowers) {
                 return
             }
-
-            console.log(towerIndex)
-            console.log(disksOnOtherTowers)
-
 
             const correctState = JSON.stringify(JSON.parse(JSON.stringify(tower)).sort())
             const actualState = JSON.stringify(tower)

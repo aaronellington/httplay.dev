@@ -99,6 +99,7 @@ function SectionInstructions<State, Update>(props: SubProps<State, Update>) {
 
 function SectionConfig<State, Update>(props: SubProps<State, Update>) {
     const runStep = async function () {
+        const tmpHistory = JSON.parse(JSON.stringify(props.history)) as History<State, Update>
         try {
             const response = await fetch(props.endpoint, {
                 method: "POST",
@@ -106,7 +107,6 @@ function SectionConfig<State, Update>(props: SubProps<State, Update>) {
             })
             try {
                 const update = await response.json() as Update
-                const tmpHistory = JSON.parse(JSON.stringify(props.history)) as History<State, Update>
                 let result = props.Game.ApplyUpdate("Player", tmpHistory.Result.State, update)
                 tmpHistory.Steps.unshift({
                     Actor: "Player",
@@ -125,15 +125,22 @@ function SectionConfig<State, Update>(props: SubProps<State, Update>) {
                         })
                     }
                 }
+
+                if (result.Success !== null) {
+                    tmpHistory.Steps.unshift(result.Message)
+                }
+
                 tmpHistory.Result = result
                 props.setHistory(tmpHistory)
-                return tmpHistory
-
             } catch (e) {
                 console.error(e)
+                tmpHistory.Steps.unshift(`${e}`)
+                props.setHistory(tmpHistory)
             }
         } catch (e: any) {
             console.error(e)
+            tmpHistory.Steps.unshift("unable to communicate with the endpoint")
+            props.setHistory(tmpHistory)
         }
     }
     return <Content>
@@ -206,6 +213,11 @@ function SectionFeed<State, Update>(props: SubProps<State, Update>) {
         <p>Event Feed:</p>
         <hr />
         {props.history.Steps.map((x) => {
+            if (typeof x === 'string') {
+                return <pre className={props.history.Result.Success === true ? classes.player : classes.error}>
+                    {x}
+                </pre>
+            }
             return <pre className={x.Actor == "Player" ? classes.player : classes.computer}>
                 {JSON.stringify(x, null, 4)}
             </pre>

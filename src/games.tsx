@@ -8,7 +8,7 @@ export type Result<State> = {
 }
 
 export type History<State, Step> = {
-    Steps: Turn<Step>[]
+    Steps: (Turn<Step> | string)[]
     Result: Result<State>
 }
 

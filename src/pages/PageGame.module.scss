@@ -42,10 +42,19 @@
 
 div .player {
     border-width: 2px;
+    color: var(--reset-css-success-primary);
     border-color: var(--reset-css-success-primary);
 }
 
 div .computer {
     border-width: 2px;
+    color: var(--reset-css-warning-primary);
     border-color: var(--reset-css-warning-primary);
+}
+
+div .error {
+    border-width: 2px;
+    color: var(--reset-css-danger-primary);
+    border-color: var(--reset-css-danger-primary);
+
 }
