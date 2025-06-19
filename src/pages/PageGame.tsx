@@ -2,7 +2,7 @@ import { Box, Button, Content, FormInput, Panel } from "@lunagic/prometheus"
 import type { Game, History } from "../games"
 import { Link } from "../link"
 import classes from "./PageGame.module.scss"
-import { useState, type Dispatch, type StateUpdater } from "preact/hooks"
+import { useCallback, useEffect, useRef, useState, type Dispatch, type StateUpdater } from "preact/hooks"
 
 export type GameProps<State, Update> = {
     Game: Game<State, Update>
@@ -19,6 +19,17 @@ export function PageGame<State, Update>(props: GameProps<State, Update>) {
         },
         Steps: [],
     })
+
+    useEffect(() => {
+        setHistory({
+            Result: {
+                Success: null,
+                Message: "",
+                State: props.Game.InitialState(),
+            },
+            Steps: [],
+        })
+    }, [])
 
     const subProps: SubProps<State, Update> = {
         Game: props.Game,
@@ -46,11 +57,11 @@ export function PageGame<State, Update>(props: GameProps<State, Update>) {
                         <SectionFeed {...subProps} />
                     </Box >
                 </div>
-                <div className={classes.center}>
+                <div className={classes.right}>
                     <Box>
                         <SectionVisualization {...subProps} />
                     </Box>
-                    <Box >
+                    <Box className={classes.scrollChild}>
                         <SectionGameState {...subProps} />
                     </Box>
                     <Box className={classes.scrollChild}>
@@ -103,14 +114,16 @@ function SectionConfig<State, Update>(props: SubProps<State, Update>) {
                     Step: update,
                 })
 
-                const computerMove = props.Game.Response(result.State)
-                if (computerMove) {
-                    result = props.Game.ApplyUpdate("Computer", tmpHistory.Result.State, computerMove)
-                    tmpHistory.Steps.unshift({
-                        Actor: "Computer",
-                        TimeStamp: new Date().toISOString(),
-                        Step: update,
-                    })
+                if (result.Success === null) {
+                    const computerMove = props.Game.Response(result.State)
+                    if (computerMove) {
+                        result = props.Game.ApplyUpdate("Computer", tmpHistory.Result.State, computerMove)
+                        tmpHistory.Steps.unshift({
+                            Actor: "Computer",
+                            TimeStamp: new Date().toISOString(),
+                            Step: computerMove,
+                        })
+                    }
                 }
                 tmpHistory.Result = result
                 props.setHistory(tmpHistory)
@@ -128,7 +141,7 @@ function SectionConfig<State, Update>(props: SubProps<State, Update>) {
         <hr />
         <FormInput type="text" value={props.endpoint} setValue={props.setEndpoint}>App Endpoint</FormInput>
         <Panel centered>
-            <Button onClick={() => {
+            <Button disabled={props.history.Result.Success !== null} onClick={() => {
                 runStep()
             }}>Step</Button>
             <Button onClick={() => {
@@ -141,21 +154,50 @@ function SectionConfig<State, Update>(props: SubProps<State, Update>) {
                     Steps: [],
                 })
             }}>Reset</Button>
+            <p>
+                {props.history.Result.Message}
+            </p>
         </Panel>
     </Content>
 }
 
+const useAutosizeTextArea = (
+    textAreaRef: HTMLTextAreaElement | null,
+    value: string
+) => {
+    const x = useCallback((textAreaRef: HTMLTextAreaElement | null) => {
+        if (textAreaRef !== null) {
+            textAreaRef.style.height = "0px";
+            const scrollHeight = textAreaRef.scrollHeight;
+            textAreaRef.style.height = scrollHeight + "px";
+        }
+    }, []);
+
+    useEffect(() => {
+        x(textAreaRef)
+    }, [textAreaRef, value]);
+};
+
 function SectionGameState<State, Update>(props: SubProps<State, Update>) {
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    useAutosizeTextArea(textAreaRef.current, JSON.stringify(props.history.Result, null, 4));
+
     return <Content>
         <p>
             Current Game State
         </p>
         <hr />
-        <textarea style="font-family: monospace; field-sizing: content;width: 100%;" value={JSON.stringify(props.history.Result.State, null, 4)} onChange={(event: any) => {
-            const x = JSON.parse(JSON.stringify(props.history)) as History<State, Update>
-            x.Result.State = JSON.parse(event?.target.value)
-            props.setHistory(x)
-        }} />
+        <textarea
+            ref={textAreaRef}
+
+            style="font-family: monospace;padding: 1rem;" value={JSON.stringify(props.history.Result.State, null, 4)} onKeyUp={(event: any) => {
+
+                try {
+                    const x = JSON.parse(JSON.stringify(props.history)) as History<State, Update>
+                    x.Result.State = JSON.parse(event?.target.value)
+                    props.setHistory(x)
+                } catch { }
+            }} />
     </Content>
 }
 

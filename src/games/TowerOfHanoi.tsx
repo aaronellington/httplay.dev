@@ -30,14 +30,47 @@ export class TowerOfHanoi implements Game<State, Update> {
         }
         state[step.TargetTower].unshift(diskToMove)
 
+        console.log("-------------------")
+        let success: boolean | null = null
+        let message = "";
+        let disksOnOtherTowers = false;
+        state.forEach((tower, towerIndex) => {
+            const isLastTower = towerIndex === state.length - 1
+
+
+            if (!isLastTower) {
+                if (tower.length > 0) {
+                    disksOnOtherTowers = true
+
+                }
+                return
+            }
+
+            if (disksOnOtherTowers) {
+                return
+            }
+
+            console.log(towerIndex)
+            console.log(disksOnOtherTowers)
+
+
+            const correctState = JSON.stringify(JSON.parse(JSON.stringify(tower)).sort())
+            const actualState = JSON.stringify(tower)
+            if (correctState === actualState) {
+                success = true
+                message = "you won"
+            }
+        })
+
+
         return {
             State: state,
-            Message: "",
-            Success: null,
+            Message: message,
+            Success: success,
         }
     }
 
-    public Response(state: State): Update | null {
+    public Response(_: State): Update | null {
         return null
     }
 
