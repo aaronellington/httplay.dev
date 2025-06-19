@@ -96,12 +96,22 @@ function SectionConfig<State, Update>(props: SubProps<State, Update>) {
             try {
                 const update = await response.json() as Update
                 const tmpHistory = JSON.parse(JSON.stringify(props.history)) as History<State, Update>
-                const result = props.Game.ApplyUpdate(tmpHistory.Result.State, update)
+                let result = props.Game.ApplyUpdate("Player", tmpHistory.Result.State, update)
                 tmpHistory.Steps.unshift({
                     Actor: "Player",
                     TimeStamp: new Date().toISOString(),
                     Step: update,
                 })
+
+                const computerMove = props.Game.Response(result.State)
+                if (computerMove) {
+                    result = props.Game.ApplyUpdate("Computer", tmpHistory.Result.State, computerMove)
+                    tmpHistory.Steps.unshift({
+                        Actor: "Computer",
+                        TimeStamp: new Date().toISOString(),
+                        Step: update,
+                    })
+                }
                 tmpHistory.Result = result
                 props.setHistory(tmpHistory)
                 return tmpHistory

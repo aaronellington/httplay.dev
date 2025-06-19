@@ -12,8 +12,10 @@ export type History<State, Step> = {
     Result: Result<State>
 }
 
+export type Actor = "Player" | "Computer"
+
 export type Turn<Step> = {
-    Actor: "Player" | "Computer"
+    Actor: Actor
     TimeStamp: string
     Step: Step
 }
@@ -21,10 +23,11 @@ export type Turn<Step> = {
 export interface Game<State, Step> {
     Title: string,
     Slug: string,
-    ApplyUpdate(state: State, step: Step): Result<State>
+    ApplyUpdate(actor: Actor, state: State, step: Step): Result<State>
     DisplayState(state: State): preact.VNode
     InitialState(): State
     ExampleUpdate(): Step
+    Response(state: State): Step | null
 }
 
 export const Games: Game<any, any>[] = [

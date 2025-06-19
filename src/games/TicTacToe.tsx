@@ -1,5 +1,5 @@
 import { Content } from "@lunagic/prometheus";
-import type { Game, Result } from "../games";
+import type { Actor, Game, Result } from "../games";
 
 
 type State = string[][]
@@ -21,12 +21,21 @@ export class TicTacToe implements Game<State, Update> {
         }
     }
 
-    public ApplyUpdate(state: State, step: Update): Result<State> {
+    public ApplyUpdate(actor: Actor, state: State, step: Update): Result<State> {
         if (state[step.X][step.Y] !== " ") {
+            console.log(state, step)
             throw "invalid move"
         }
 
-        state[step.X][step.Y] = "○"
+
+        let icon = "○"
+        if (actor === "Computer") {
+            icon = "×"
+        }
+
+        state[step.X][step.Y] = icon
+
+
 
         return {
             Success: null,
@@ -34,6 +43,29 @@ export class TicTacToe implements Game<State, Update> {
             State: state,
         }
     }
+
+    public Response(state: State): Update | null {
+        const possibleMoves: Update[] = [];
+        Array.from({ length: 3 }, (_, x) => {
+            Array.from({ length: 3 }, (_, y) => {
+                if (state[x][y] !== " ") {
+                    return;
+                }
+
+                possibleMoves.push({
+                    X: x,
+                    Y: y,
+                })
+            })
+        })
+
+        if (!possibleMoves.length) {
+            return null
+        }
+
+        return possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
+    }
+
 
     public DisplayState(state: State): preact.VNode {
         let ascii = ""

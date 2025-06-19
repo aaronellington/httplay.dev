@@ -1,5 +1,5 @@
 import { Content } from "@lunagic/prometheus";
-import type { Game, Result } from "../games";
+import type { Actor, Game, Result } from "../games";
 
 type State = number[][]
 
@@ -19,7 +19,7 @@ export class TowerOfHanoi implements Game<State, Update> {
         }
     }
 
-    public ApplyUpdate(state: State, step: Update): Result<State> {
+    public ApplyUpdate(_: Actor, state: State, step: Update): Result<State> {
         const diskToMove = state[step.SourceTower].shift()
         if (!diskToMove) {
             return {
@@ -35,6 +35,10 @@ export class TowerOfHanoi implements Game<State, Update> {
             Message: "",
             Success: null,
         }
+    }
+
+    public Response(state: State): Update | null {
+        return null
     }
 
     public DisplayState(state: State): preact.VNode {
