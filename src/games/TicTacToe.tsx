@@ -121,19 +121,18 @@ export class TicTacToe implements Game<State, Update> {
 
 
     public DisplayState(state: State): preact.VNode {
-        let ascii = ""
+        let ascii = "   0   1   2\n"
 
         state.forEach((columns, row) => {
             if (row !== 0) {
-                ascii += "\n━━━╋━━━╋━━━\n"
-            } else {
+                ascii += "\n  ━━━╋━━━╋━━━\n"
             }
 
             columns.forEach((value, index) => {
                 if (index !== 0) {
                     ascii += ` ┃ ${value}`
                 } else {
-                    ascii += ` ${value}`
+                    ascii += `${row}  ${value}`
                 }
             })
 
