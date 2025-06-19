@@ -39,3 +39,13 @@
         overflow-y: auto;
     }
 }
+
+div .player {
+    border-width: 2px;
+    border-color: var(--reset-css-success-primary);
+}
+
+div .computer {
+    border-width: 2px;
+    border-color: var(--reset-css-warning-primary);
+}

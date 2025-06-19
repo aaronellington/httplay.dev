@@ -206,7 +206,7 @@ function SectionFeed<State, Update>(props: SubProps<State, Update>) {
         <p>Event Feed:</p>
         <hr />
         {props.history.Steps.map((x) => {
-            return <pre>
+            return <pre className={x.Actor == "Player" ? classes.player : classes.computer}>
                 {JSON.stringify(x, null, 4)}
             </pre>
         })}
