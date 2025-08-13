@@ -1,0 +1,10 @@
+services:
+  frontend:
+    command: make dev-npm
+    watch:
+      - Makefile
+      - package.json
+      - package-lock.json
+      - tsconfig.json
+      - vite.config.ts
+    exclude: []

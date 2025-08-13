@@ -1,0 +1,5 @@
+default_port: 3000
+static_site_path: dist
+docker_image: aaronellington/httplay.dev
+gitignore:
+  - dist
