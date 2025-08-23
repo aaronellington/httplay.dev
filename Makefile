@@ -1,4 +1,4 @@
-.PHONY: full clean lint fix test build build-npm dev-npm watch docker-build docker-test
+.PHONY: full clean lint lint-npm fix fix-npm test build build-npm dev-npm watch docker-build docker-test
 
 SHELL=/bin/bash -o pipefail
 $(shell git config core.hooksPath ops/git-hooks)
@@ -10,10 +10,18 @@ clean:
 	git clean -Xdff --exclude="!.env.local" --exclude="!.env.*.local"
 
 ## Lint the project
-lint:
+lint: lint-npm
+
+lint-npm:
+	npm install
+	npm run lint
 
 ## Fix the project
-fix:
+fix: fix-npm
+
+fix-npm:
+	npm install
+	npm run fix
 
 ## Test the project
 test:
